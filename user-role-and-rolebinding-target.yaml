@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: user-service-account
+  namespace: namespace # That service account matches.
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: user-role
+  namespace: namespace # Should be namespace you are granting access to.
+rules:
+- apiGroups: ["*"]
+  resources: ["pods","deployments","pods/log"] # Example resources.
+  verbs: ["get", "watch", "list"] # Example verbs.
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: user-rolebinding
+  namespace: namespace # Should be namespace you are granting access to.
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: user-role # Should match name of Role.
+subjects:
+- namespace: namespace # Should match namespace where SA lives.
+  kind: ServiceAccount
+  name: user-service-account # Should match service account name, above.
